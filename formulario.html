@@ -142,16 +142,22 @@
       try {
         button.disabled = true;
         button.textContent = "Enviando...";
+
+
+
         
-        const formData = new URLSearchParams(new FormData(form));
-        
-        const response = await fetch("https://script.google.com/macros/s/AKfycbweditwPTxnuDNaoV_DaMBt0eDezZjoLlwNhjO_71LdLBUyKnAaFHPdJjhxbE8ug1O0/exec", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
-          body: formData
-        });
+const formData = Object.fromEntries(new FormData(form).entries());
+
+const response = await fetch("https://script.google.com/macros/s/AKfycbweditwPTxnuDNaoV_DaMBt0eDezZjoLlwNhjO_71LdLBUyKnAaFHPdJjhxbE8ug1O0/exec", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(formData)
+});
+
+
+
         
         if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
         
