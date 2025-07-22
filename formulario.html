@@ -103,7 +103,6 @@
     function actualizarLaboratorios(sede) {
       const labSelect = document.getElementById("laboratorioSelect");
       const pcSelect = document.getElementById("pcSelect");
-
       labSelect.innerHTML = '<option value="">-- Selecciona Laboratorio --</option>';
       pcSelect.innerHTML = '<option value="">-- Selecciona PC --</option>';
 
@@ -139,24 +138,21 @@
       const form = document.getElementById("reservaForm");
       const formData = Object.fromEntries(new FormData(form).entries());
 
-      fetch('https://script.google.com/macros/s/AKfycbxVA27lchKb7l7YBwWuRf1-0jpVBGNHAce4Du0oEZRwAE0WTO1LN23_ryQR--4z8uLY/exec', {
-        method: 'POST',
-        body: JSON.stringify(formData),
-        headers: {
-          'Content-Type': 'application/json'
-        }
+      fetch("https://script.google.com/macros/s/AKfycbwjgQlwIJRGrPBUmoYPIUERrWbpYsGFWieE84Hya8fw3cOjFmS5eyq-kvPZWsDb4x6R/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
       })
       .then(response => response.text())
       .then(text => {
-        alert("✅ Reserva registrada exitosamente.");
+        alert("✅ Reserva enviada: " + text);
         form.reset();
         document.getElementById("laboratorioSelect").innerHTML = '<option value="">-- Selecciona Laboratorio --</option>';
         document.getElementById("pcSelect").innerHTML = '<option value="">-- Selecciona PC --</option>';
-        console.log("Respuesta del servidor:", text);
       })
       .catch(error => {
-        console.error("Error al enviar los datos:", error);
-        alert("❌ No se pudo enviar la reserva. Intenta nuevamente.");
+        alert("❌ Error al enviar la reserva");
+        console.error("Error:", error);
       });
     }
   </script>
