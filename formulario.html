@@ -134,28 +134,51 @@
       }
     });
 
-function validarYEnviar() {
-  const form = document.getElementById("reservaForm");
-  const formData = new FormData(form); // Usar FormData directamente
+function validarYEnviar(event) {
+  event.preventDefault();
   
-fetch("https://script.google.com/macros/s/AKfycbweditwPTxnuDNaoV_DaMBt0eDezZjoLlwNhjO_71LdLBUyKnAaFHPdJjhxbE8ug1O0/exec", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/x-www-form-urlencoded"
-  },
-  body: new URLSearchParams(new FormData(document.getElementById("reservaForm")))
-})
-.then(response => response.json())
-.then(data => {
-  if (data.success) {
-    alert("Reserva exitosa!");
-  } else {
-    throw new Error(data.error);
+  const form = document.getElementById("reservaForm");
+  const button = form.querySelector("button[type='submit']");
+  button.disabled = true;
+  button.textContent = "Enviando...";
+
+  // Convertir FormData a objeto plano para mejor compatibilidad
+  const formData = new URLSearchParams();
+  for (const pair of new FormData(form)) {
+    formData.append(pair[0], pair[1]);
   }
-})
-.catch(error => {
-  alert("Error: " + error.message);
-});
+
+  fetch("https://script.google.com/macros/s/AKfycbweditwPTxnuDNaoV_DaMBt0eDezZjoLlwNhjO_71LdLBUyKnAaFHPdJjhxbE8ug1O0/exec", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: formData
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("Error HTTP: " + response.status);
+    return response.json();
+  })
+  .then(data => {
+    if (data.success) {
+      alert("✅ " + data.message);
+      form.reset();
+      // Resetear selects
+      document.getElementById("laboratorioSelect").innerHTML = '<option value="">-- Selecciona Laboratorio --</option>';
+      document.getElementById("pcSelect").innerHTML = '<option value="">-- Selecciona PC --</option>';
+    } else {
+      throw new Error(data.error || "Error en el servidor");
+    }
+  })
+  .catch(error => {
+    console.error("Error completo:", error);
+    alert("❌ Error: " + error.message);
+  })
+  .finally(() => {
+    button.disabled = false;
+    button.textContent = "Reservar";
+  });
+}
   </script>
 </body>
 </html>
