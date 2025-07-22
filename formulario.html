@@ -134,27 +134,28 @@
       }
     });
 
-    function validarYEnviar() {
-      const form = document.getElementById("reservaForm");
-      const formData = Object.fromEntries(new FormData(form).entries());
-
-      fetch("https://script.google.com/macros/s/AKfycbwjgQlwIJRGrPBUmoYPIUERrWbpYsGFWieE84Hya8fw3cOjFmS5eyq-kvPZWsDb4x6R/exec", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
-      })
-      .then(response => response.text())
-      .then(text => {
-        alert("✅ Reserva enviada: " + text);
-        form.reset();
-        document.getElementById("laboratorioSelect").innerHTML = '<option value="">-- Selecciona Laboratorio --</option>';
-        document.getElementById("pcSelect").innerHTML = '<option value="">-- Selecciona PC --</option>';
-      })
-      .catch(error => {
-        alert("❌ Error al enviar la reserva");
-        console.error("Error:", error);
-      });
-    }
+function validarYEnviar() {
+  const form = document.getElementById("reservaForm");
+  const formData = new FormData(form); // Usar FormData directamente
+  
+fetch("https://script.google.com/macros/s/AKfycbwJrmD_VAHcwkG8jq8iok25PeQ_AMV5xfMrKXgEuBtJ8DUZ4BO6GA_YKVxB6gAJP32h/exec", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+  },
+  body: new URLSearchParams(new FormData(document.getElementById("reservaForm")))
+})
+.then(response => response.json())
+.then(data => {
+  if (data.success) {
+    alert("Reserva exitosa!");
+  } else {
+    throw new Error(data.error);
+  }
+})
+.catch(error => {
+  alert("Error: " + error.message);
+});
   </script>
 </body>
 </html>
